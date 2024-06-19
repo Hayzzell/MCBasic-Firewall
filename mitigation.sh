@@ -78,7 +78,6 @@ done
 
 
  if [[ "$UDP_STATE" == "OFF" ]]; then
-    # Command to turn off UDP
     echo "Turning off UDP..."
     #  Here it executes the turn off comamand, if you wish to keep DNS on or anyother UDP port please add it in here(make sure its above the DROP). 
     iptables -A INPUT -p udp -j DROP
