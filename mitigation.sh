@@ -4,7 +4,7 @@
 # https://Pixiemines.com/
 
 
-function Rootchekcer() {
+function RootChekcer() {
 	if [ "${EUID}" -ne 0 ]; then
 		echo "You have to run the script as root"
 		exit 1
@@ -49,7 +49,7 @@ function OSVersionChecker() {
 }
 
 
-function checkcer(){
+function checkcer() {
 Rootchekcer
 OSVersionChecker
 }
