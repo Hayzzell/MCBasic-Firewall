@@ -194,33 +194,33 @@ sudo sysctl -p
 # extras
 
 ### 1: Drop invalid packets ### 
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -m conntrack --ctstate INVALID -j DROP  
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -m conntrack --ctstate INVALID -j DROP  
 
 
 ### 2: Drop TCP packets that are new and are not SYN ### 
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -p tcp ! --syn -m conntrack --ctstate NEW -j DROP 
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -p tcp ! --syn -m conntrack --ctstate NEW -j DROP 
 
  
 ### 3: Drop SYN packets with suspicious MSS value ### 
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 536:65535 -j DROP  
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 536:65535 -j DROP  
 
 
 ### 4: Block packets with bogus TCP flags ### 
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -p tcp --tcp-flags FIN,RST FIN,RST -j DROP
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -p tcp --tcp-flags FIN,ACK FIN -j DROP
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -p tcp --tcp-flags ACK,URG URG -j DROP
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -p tcp --tcp-flags ACK,PSH PSH -j DROP
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -p tcp --tcp-flags ALL NONE -j DROP
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -p tcp --tcp-flags FIN,RST FIN,RST -j DROP
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -p tcp --tcp-flags FIN,ACK FIN -j DROP
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -p tcp --tcp-flags ACK,URG URG -j DROP
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -p tcp --tcp-flags ACK,PSH PSH -j DROP
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -p tcp --tcp-flags ALL NONE -j DROP
 
 
 ### 6: Drop ICMP (you usually don't need this protocol) ### 
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -p icmp -j DROP  
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -p icmp -j DROP  
 
 
 ### 7: Drop fragments in all chains ### 
-/sbin/iptables -t mangle -A PREROUTING -i eth0 -f -j DROP  
+/sbin/iptables -t mangle -A PREROUTING -i ${MAIN_INTERFACE} -f -j DROP  
 
 
 ### 8: Limit connections per source IP ### 
