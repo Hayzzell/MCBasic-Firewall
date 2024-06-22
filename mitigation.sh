@@ -233,17 +233,38 @@ sudo sysctl -p
 
 
 ### 10: Limit new TCP connections per second per source IP ### 
+
 /sbin/iptables -A INPUT -p tcp -m conntrack --ctstate NEW -m limit --limit 60/s --limit-burst 20 -j ACCEPT 
 /sbin/iptables -A INPUT -p tcp -m conntrack --ctstate NEW -j DROP  
  
-### SSH brute-force protection ### 
+### SSH brute-force protection ###  test
 /sbin/iptables -A INPUT -p tcp --dport ssh -m conntrack --ctstate NEW -m recent --set 
 /sbin/iptables -A INPUT -p tcp --dport ssh -m conntrack --ctstate NEW -m recent --update --seconds 60 --hitcount 10 -j DROP  
 
+## Drop spam packets on the mc server itself
+iptables -A INPUT -p tcp --dport 25565 -m conntrack --ctstate NEW -m recent --set
+iptables -A INPUT -p tcp --dport 25565 -m conntrack --ctstate NEW -m recent --update --seconds 30 --hitcount 10 -j DROP
+
+#rate limit new connections to the server
+iptables -A INPUT -p tcp --dport 25565 -m state --state NEW -m limit --limit 30/minute --limit-burst 10 -j ACCEPT
+iptables -A INPUT -p tcp --dport 25565 -m state --state NEW -j DROP
+
+## Drop SYN flood attacks
+iptables -A INPUT -p tcp --syn -m limit --limit 1/s --limit-burst 3 -j RETURN
+iptables -A INPUT -p tcp --syn -j DROP
 
 ### Protection against port scanning ### 
 /sbin/iptables -N port-scanning 
 /sbin/iptables -A port-scanning -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 1/s --limit-burst 2 -j RETURN 
 /sbin/iptables -A port-scanning -j DROP
+
+## log and drop suspicious packets
+iptables -A INPUT -p tcp --dport 25565 -m connlimit --connlimit-above 10 -j LOG --log-prefix "DDoS Attack: "
+iptables -A INPUT -p tcp --dport 25565 -m connlimit --connlimit-above 10 -j DROP
+
+
+sudo iptables-save > /etc/iptables/rules.v4
+sudo apt-get install iptables-persistent
+
 
 }
